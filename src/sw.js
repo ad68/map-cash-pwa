@@ -123,3 +123,14 @@ self.addEventListener('fetch', (event) => {
         })
     );
 });
+self.addEventListener('message', async (event) => {
+    if (event.data && event.data.type === 'CLEAR_TILE_CACHE') {
+        const cacheNames = await caches.keys();
+        for (const cacheName of cacheNames) {
+            if (cacheName.includes('tile') || cacheName.includes('leaflet')) {
+                await caches.delete(cacheName);
+            }
+        }
+        console.log('Tile cache cleared');
+    }
+});

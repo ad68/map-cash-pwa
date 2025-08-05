@@ -48,23 +48,15 @@ function TileLayerWithLock({ url }: { url: string }) {
 
 export default function MapTest() {
     const center: [number, number] = [35.7, 51.4];
-    const clearTileCache = async () => {
-        if ('caches' in window) {
-            const cacheNames = await caches.keys()
-            for (const name of cacheNames) {
-                const cache = await caches.open(name)
-                const requests = await cache.keys()
-                for (const request of requests) {
-                    if (request.url.includes('/gm_layer/gm_grid/')) {
-                        await cache.delete(request)
-                    }
-                }
-            }
-            alert('کش تایل‌ها پاک شد ✅')
+    const clearTileCache = () => {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'CLEAR_TILE_CACHE',
+            });
         } else {
-            alert('مرورگر از Cache API پشتیبانی نمی‌کند ❌')
+            console.warn("No active service worker found.");
         }
-    }
+    };
     return (
         <div style={{ height: '100vh', width: '100%' }}>
             <MapContainer style={{ height: '100%', width: '100%' }}>
