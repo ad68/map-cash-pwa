@@ -50,7 +50,8 @@ function putInDb(db, key, blob) {
     })
 }
 
-const serverMapUrl = 'http://37.32.26.141:8080'
+/* const serverMapUrl = 'http://37.32.26.141:8080' */
+const serverMapUrl = 'http://map.optimoai.ir'
 const tileRegex = /^\/wmts\/gm_layer\/gm_grid\/(\d+)\/(\d+)\/(\d+)\.png$/
 
 // مسیر درخواست Tile
@@ -90,3 +91,35 @@ registerRoute(
         }
     }
 )
+// 👇 این بخش رو اضافه کن
+
+self.addEventListener('fetch', (event) => {
+    if (event.request.url.includes('/wmts/gm_layer/gm_grid/')) {
+        return; // این روت از قبل با registerRoute مدیریت شده
+    }
+
+    event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            return fetch(event.request)
+                .then((networkResponse) => {
+                    return caches.open('dynamic-cache').then((cache) => {
+                        cache.put(event.request, networkResponse.clone());
+                        return networkResponse;
+                    });
+                })
+                .catch(() => {
+                    if (event.request.destination === 'image') {
+                        return caches.match('/fallback.png'); // عکس fallback
+                    }
+                    return new Response('Offline & not cached', {
+                        status: 504,
+                        statusText: 'Offline & not cached',
+                    });
+                });
+        })
+    );
+});

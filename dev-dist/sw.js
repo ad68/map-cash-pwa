@@ -67,7 +67,7 @@ if (!self.define) {
     });
   };
 }
-define(['./workbox-47da91e0'], (function (workbox) { 'use strict';
+define(['./workbox-ce4f0d5f'], (function (workbox) { 'use strict';
 
   self.skipWaiting();
   workbox.clientsClaim();
@@ -82,25 +82,18 @@ define(['./workbox-47da91e0'], (function (workbox) { 'use strict';
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
     "url": "index.html",
-    "revision": "0.mtgqsqcp9t"
+    "revision": "0.2eqfa7lpu28"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
     allowlist: [/^\/$/]
   }));
-  workbox.registerRoute(/^https:\/\/(tile\.openstreetmap\.org|yourtileserver\.com)\/.*/, new workbox.CacheFirst({
+  workbox.registerRoute(/^https?:\/\/37\.32\.26\.141:8080\/wmts\/gm_layer\/gm_grid\/\d+\/\d+\/\d+\.png$/, new workbox.CacheFirst({
     "cacheName": "tile-cache",
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 1000,
       maxAgeSeconds: 2592000
     }), new workbox.CacheableResponsePlugin({
-      statuses: [0, 200]
-    })]
-  }), 'GET');
-  workbox.registerRoute(/^https:\/\/your-api-endpoint\.com\/.*/, new workbox.NetworkFirst({
-    "cacheName": "api-cache",
-    "networkTimeoutSeconds": 10,
-    plugins: [new workbox.CacheableResponsePlugin({
       statuses: [0, 200]
     })]
   }), 'GET');
