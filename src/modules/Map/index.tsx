@@ -53,11 +53,16 @@ export default function MapTest() {
             navigator.serviceWorker.controller.postMessage({
                 type: 'CLEAR_TILE_CACHE',
             });
-            alert("درخواست پاک‌سازی کش ارسال شد.");
+            alert("درخواست پاک‌سازی کش ارسال شد. صفحه برای اعمال تغییرات مجدداً بارگذاری می‌شود.");
+            // بعد از 1 ثانیه صفحه رو رفرش می‌کنیم
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } else {
             alert("Service Worker فعال نیست.");
         }
     };
+
     return (
         <div style={{ height: '100vh', width: '100%' }}>
             <MapContainer style={{ height: '100%', width: '100%' }}>
