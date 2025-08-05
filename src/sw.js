@@ -124,24 +124,39 @@ self.addEventListener('fetch', (event) => {
     );
 });
 self.addEventListener('message', async (event) => {
+    console.log('Cache API cleared');
     if (event.data && event.data.type === 'CLEAR_TILE_CACHE') {
-        // 1. پاک کردن Cache API
-        const cacheNames = await caches.keys();
-        for (const cacheName of cacheNames) {
-            if (cacheName.includes('tile') || cacheName.includes('leaflet') || cacheName.includes('dynamic')) {
-                await caches.delete(cacheName);
+        console.log('Cache API cleared');
+        try {
+            // پاک کردن Cache API
+            const cacheNames = await caches.keys();
+            for (const cacheName of cacheNames) {
+                if (cacheName.includes('tile') || cacheName.includes('leaflet') || cacheName.includes('dynamic')) {
+                    await caches.delete(cacheName);
+                }
             }
+            console.log('Cache API cleared');
+
+            // پاک کردن IndexedDB به صورت Promise و await
+            await new Promise((resolve, reject) => {
+                const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
+                deleteRequest.onsuccess = () => {
+                    console.log('IndexedDB deleted');
+                    resolve();
+                };
+                deleteRequest.onerror = (e) => {
+                    console.warn('Failed to delete IndexedDB', e);
+                    reject(e);
+                };
+                deleteRequest.onblocked = () => {
+                    console.warn('Delete blocked: please close other tabs using this site.');
+                    reject(new Error('Delete blocked'));
+                };
+            });
+
+            console.log('Tile cache (Cache API + IndexedDB) cleared');
+        } catch (e) {
+            console.error('Error clearing tile cache:', e);
         }
-
-        // 2. پاک کردن IndexedDB
-        const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
-        deleteRequest.onsuccess = () => {
-            console.log('IndexedDB deleted');
-        };
-        deleteRequest.onerror = (e) => {
-            console.warn('Failed to delete IndexedDB', e);
-        };
-
-        console.log('Tile cache (Cache API + IndexedDB) cleared');
     }
 });
