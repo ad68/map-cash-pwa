@@ -53,8 +53,9 @@ export default function MapTest() {
             navigator.serviceWorker.controller.postMessage({
                 type: 'CLEAR_TILE_CACHE',
             });
+            alert("درخواست پاک‌سازی کش ارسال شد.");
         } else {
-            console.warn("No active service worker found.");
+            alert("Service Worker فعال نیست.");
         }
     };
     return (

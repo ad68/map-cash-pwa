@@ -125,12 +125,23 @@ self.addEventListener('fetch', (event) => {
 });
 self.addEventListener('message', async (event) => {
     if (event.data && event.data.type === 'CLEAR_TILE_CACHE') {
+        // 1. پاک کردن Cache API
         const cacheNames = await caches.keys();
         for (const cacheName of cacheNames) {
-            if (cacheName.includes('tile') || cacheName.includes('leaflet')) {
+            if (cacheName.includes('tile') || cacheName.includes('leaflet') || cacheName.includes('dynamic')) {
                 await caches.delete(cacheName);
             }
         }
-        console.log('Tile cache cleared');
+
+        // 2. پاک کردن IndexedDB
+        const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
+        deleteRequest.onsuccess = () => {
+            console.log('IndexedDB deleted');
+        };
+        deleteRequest.onerror = (e) => {
+            console.warn('Failed to delete IndexedDB', e);
+        };
+
+        console.log('Tile cache (Cache API + IndexedDB) cleared');
     }
 });
