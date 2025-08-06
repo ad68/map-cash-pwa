@@ -169,6 +169,6 @@ self.addEventListener('fetch', (event) => {
     }
 });
  */
-self.addEventListener('message', (event) => {
+/* self.addEventListener('message', (event) => {
     console.log('[SW] Message received:', event.data);
-});
+}); */

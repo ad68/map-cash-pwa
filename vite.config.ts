@@ -35,12 +35,6 @@ export default defineConfig({
           }
         ]
       },
-      strategies: 'injectManifest',
-      srcDir: 'src',
-      filename: 'sw.js',
-      injectManifest: {
-        globPatterns: ['**/*.{js,css,html,png,svg}'],
-      },
       workbox: {
         runtimeCaching: [
           {
