@@ -10,7 +10,7 @@ precacheAndRoute(self.__WB_MANIFEST || [])
 const DB_NAME = 'tile-cache-db'
 const STORE_NAME = 'tiles'
 const DB_VERSION = 1
-self.addEventListener('install', (event) => {
+/* self.addEventListener('install', (event) => {
     console.log('[SW] نصب شد');
     self.skipWaiting(); // فوراً فعال کنه
 });
@@ -18,7 +18,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
     console.log('[SW] فعال شد');
     event.waitUntil(self.clients.claim()); // کنترل تمام تب‌ها رو بگیره
-});
+}); */
 function openDb() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION)
