@@ -1,4 +1,4 @@
-
+/// <reference lib="webworker" />
 
 import { precacheAndRoute } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
@@ -10,15 +10,7 @@ precacheAndRoute(self.__WB_MANIFEST || [])
 const DB_NAME = 'tile-cache-db'
 const STORE_NAME = 'tiles'
 const DB_VERSION = 1
-self.addEventListener('install', (event) => {
-    console.log('[SW] نصب شد');
-    self.skipWaiting(); // فوراً فعال کنه
-});
 
-self.addEventListener('activate', (event) => {
-    console.log('[SW] فعال شد');
-    event.waitUntil(self.clients.claim()); // کنترل تمام تب‌ها رو بگیره
-});
 function openDb() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION)
@@ -131,59 +123,3 @@ self.addEventListener('fetch', (event) => {
         })
     );
 });
-/* self.addEventListener('message', async (event) => {
-    console.log('Cache API cleared');
-    if (event.data && event.data.type === 'CLEAR_TILE_CACHE') {
-        console.log('Cache API cleared');
-        try {
-            // پاک کردن Cache API
-            const cacheNames = await caches.keys();
-            for (const cacheName of cacheNames) {
-                if (cacheName.includes('tile') || cacheName.includes('leaflet') || cacheName.includes('dynamic')) {
-                    await caches.delete(cacheName);
-                }
-            }
-            console.log('Cache API cleared');
-
-            // پاک کردن IndexedDB به صورت Promise و await
-            await new Promise((resolve, reject) => {
-                const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
-                deleteRequest.onsuccess = () => {
-                    console.log('IndexedDB deleted');
-                    resolve();
-                };
-                deleteRequest.onerror = (e) => {
-                    console.warn('Failed to delete IndexedDB', e);
-                    reject(e);
-                };
-                deleteRequest.onblocked = () => {
-                    console.warn('Delete blocked: please close other tabs using this site.');
-                    reject(new Error('Delete blocked'));
-                };
-            });
-
-            console.log('Tile cache (Cache API + IndexedDB) cleared');
-        } catch (e) {
-            console.error('Error clearing tile cache:', e);
-        }
-    }
-});
- */
-/* self.addEventListener('message', async (event) => {
-    if (event.data?.type === 'CLEAR_ALL_CACHES') {
-        // پاک کردن Cache API
-        const cacheNames = await caches.keys();
-        await Promise.all(cacheNames.map((name) => caches.delete(name)));
-
-        // پاک کردن IndexedDB
-        const dbDeleteRequest = indexedDB.deleteDatabase('leafletTileCache');
-        dbDeleteRequest.onsuccess = () => {
-            console.log('IndexedDB deleted');
-            event.source?.postMessage('CACHES_CLEARED');
-        };
-        dbDeleteRequest.onerror = () => {
-            console.warn('Failed to delete IndexedDB');
-            event.source?.postMessage('CACHES_CLEARED'); // حتی اگر خطا داد، ادامه بده
-        };
-    }
-}); */
