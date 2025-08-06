@@ -1,4 +1,4 @@
-/// <reference lib="webworker" />
+
 
 import { precacheAndRoute } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
@@ -10,7 +10,15 @@ precacheAndRoute(self.__WB_MANIFEST || [])
 const DB_NAME = 'tile-cache-db'
 const STORE_NAME = 'tiles'
 const DB_VERSION = 1
+self.addEventListener('install', (event) => {
+    console.log('[SW] نصب شد');
+    self.skipWaiting(); // فوراً فعال کنه
+});
 
+self.addEventListener('activate', (event) => {
+    console.log('[SW] فعال شد');
+    event.waitUntil(self.clients.claim()); // کنترل تمام تب‌ها رو بگیره
+});
 function openDb() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION)
@@ -123,7 +131,7 @@ self.addEventListener('fetch', (event) => {
         })
     );
 });
-self.addEventListener('message', async (event) => {
+/* self.addEventListener('message', async (event) => {
     console.log('Cache API cleared');
     if (event.data && event.data.type === 'CLEAR_TILE_CACHE') {
         console.log('Cache API cleared');
@@ -159,4 +167,8 @@ self.addEventListener('message', async (event) => {
             console.error('Error clearing tile cache:', e);
         }
     }
+});
+ */
+self.addEventListener('message', (event) => {
+    console.log('[SW] Message received:', event.data);
 });

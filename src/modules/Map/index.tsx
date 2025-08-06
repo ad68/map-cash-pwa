@@ -48,20 +48,29 @@ function TileLayerWithLock({ url }: { url: string }) {
 
 export default function MapTest() {
     const center: [number, number] = [35.7, 51.4];
-    const clearTileCache = () => {
-        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-                type: 'CLEAR_TILE_CACHE',
-            });
-            alert("درخواست پاک‌سازی کش ارسال شد. صفحه برای اعمال تغییرات مجدداً بارگذاری می‌شود.");
-            // بعد از 1 ثانیه صفحه رو رفرش می‌کنیم
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+    /*     const clearTileCache = () => {
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'CLEAR_TILE_CACHE',
+                });
+                alert("درخواست پاک‌سازی کش ارسال شد. صفحه برای اعمال تغییرات مجدداً بارگذاری می‌شود.");
+    
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                alert("Service Worker فعال نیست.");
+            }
+        }; */
+    const sendMsg = () => {
+        /*         navigator.serviceWorker.controller?.postMessage({ type: 'HELLO' }); */
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'HELLO' });
         } else {
-            alert("Service Worker فعال نیست.");
+            console.warn('No active SW controller');
         }
-    };
+    }
+
 
     return (
         <div style={{ height: '100vh', width: '100%' }}>
@@ -70,7 +79,7 @@ export default function MapTest() {
                 <TileLayerWithLock url={tileUrl} />
             </MapContainer>
             <button
-                onClick={clearTileCache}
+                onClick={sendMsg}
                 style={{
                     position: 'absolute',
                     top: 10,
