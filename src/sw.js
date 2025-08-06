@@ -10,7 +10,7 @@ precacheAndRoute(self.__WB_MANIFEST || [])
 const DB_NAME = 'tile-cache-db'
 const STORE_NAME = 'tiles'
 const DB_VERSION = 1
-/* self.addEventListener('install', (event) => {
+self.addEventListener('install', (event) => {
     console.log('[SW] نصب شد');
     self.skipWaiting(); // فوراً فعال کنه
 });
@@ -18,7 +18,7 @@ const DB_VERSION = 1
 self.addEventListener('activate', (event) => {
     console.log('[SW] فعال شد');
     event.waitUntil(self.clients.claim()); // کنترل تمام تب‌ها رو بگیره
-}); */
+});
 function openDb() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION)
@@ -169,6 +169,21 @@ self.addEventListener('fetch', (event) => {
     }
 });
  */
-/* self.addEventListener('message', (event) => {
-    console.log('[SW] Message received:', event.data);
+/* self.addEventListener('message', async (event) => {
+    if (event.data?.type === 'CLEAR_ALL_CACHES') {
+        // پاک کردن Cache API
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
+
+        // پاک کردن IndexedDB
+        const dbDeleteRequest = indexedDB.deleteDatabase('leafletTileCache');
+        dbDeleteRequest.onsuccess = () => {
+            console.log('IndexedDB deleted');
+            event.source?.postMessage('CACHES_CLEARED');
+        };
+        dbDeleteRequest.onerror = () => {
+            console.warn('Failed to delete IndexedDB');
+            event.source?.postMessage('CACHES_CLEARED'); // حتی اگر خطا داد، ادامه بده
+        };
+    }
 }); */

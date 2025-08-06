@@ -7,7 +7,7 @@ const tileUrl = 'http://map.optimoai.ir/wmts/gm_layer/gm_grid/{z}/{x}/{y}.png';
 function SetView({ center, zoom }: { center: [number, number]; zoom: number }) {
     const map = useMap();
     useEffect(() => {
-        map.setView(center, zoom);
+        map.setView(center, 17);
     }, [center, zoom, map]);
     return null;
 }
@@ -46,8 +46,29 @@ function TileLayerWithLock({ url }: { url: string }) {
     return <TileLayer url={url} />;
 }
 
+
+const unregisterSW = () => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(registration => {
+            if (registration) {
+                registration.unregister().then(() => {
+                    console.log('Service Worker unregistered');
+                    window.location.reload();
+                });
+            }
+        });
+    }
+};
 export default function MapTest() {
     const center: [number, number] = [35.7, 51.4];
+
+    /*   function clearTileCache() {
+          if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+              navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_TILE_CACHE' });
+          } else {
+              console.warn('Service Worker controller not available');
+          }
+      } */
     /*     const clearTileCache = () => {
             if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage({
@@ -62,14 +83,14 @@ export default function MapTest() {
                 alert("Service Worker فعال نیست.");
             }
         }; */
-    const sendMsg = () => {
-        /*         navigator.serviceWorker.controller?.postMessage({ type: 'HELLO' }); */
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({ type: 'HELLO' });
-        } else {
-            console.warn('No active SW controller');
-        }
-    }
+    /*   const sendMsg = () => {
+         
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+              navigator.serviceWorker.controller.postMessage({ type: 'HELLO' });
+          } else {
+              console.warn('No active SW controller');
+          }
+      } */
 
 
     return (
@@ -79,7 +100,7 @@ export default function MapTest() {
                 <TileLayerWithLock url={tileUrl} />
             </MapContainer>
             <button
-                onClick={sendMsg}
+                onClick={unregisterSW}
                 style={{
                     position: 'absolute',
                     top: 10,
