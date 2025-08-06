@@ -1,62 +1,56 @@
-import { useEffect } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { useEffect, useRef } from 'react';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const tileUrl = 'http://map.optimoai.ir/wmts/gm_layer/gm_grid/{z}/{x}/{y}.png';
 
-function SetView({ center, zoom }: { center: [number, number]; zoom: number }) {
-    const map = useMap();
-    useEffect(() => {
-        map.setView(center, 17);
-    }, [center, zoom, map]);
-    return null;
-}
-
-function TileLayerWithLock({ url }: { url: string }) {
-    const map = useMap();
+export default function MapLeafletVanilla() {
+    const mapRef = useRef<HTMLDivElement>(null);
+    const mapInstanceRef = useRef<L.Map | null>(null);
 
     useEffect(() => {
-        // در شروع بارگذاری لایه، زوم و درگ رو غیرفعال کن
-        function onLoading() {
+        if (!mapRef.current) return;
+
+        // جلوگیری از ایجاد مجدد نقشه در hot reload یا render مجدد
+        if (mapInstanceRef.current) return;
+
+        const map = L.map(mapRef.current).setView([35.7, 51.4], 17);
+        mapInstanceRef.current = map;
+
+        const tileLayer = L.tileLayer(tileUrl, {
+            maxZoom: 19,
+            minZoom: 1,
+        });
+
+        // هنگام شروع بارگذاری، تعاملات نقشه را غیرفعال کن
+        tileLayer.on('loading', () => {
             map.dragging.disable();
             map.scrollWheelZoom.disable();
             map.doubleClickZoom.disable();
             map.boxZoom.disable();
             map.keyboard.disable();
-        }
-        // بعد از اتمام بارگذاری، مجدداً فعال کن
-        function onLoad() {
+        });
+
+        // هنگام اتمام بارگذاری، تعاملات را فعال کن
+        tileLayer.on('load', () => {
             map.dragging.enable();
             map.scrollWheelZoom.enable();
             map.doubleClickZoom.enable();
             map.boxZoom.enable();
             map.keyboard.enable();
-        }
+        });
 
-        map.on('loading', onLoading);
-        map.on('load', onLoad);
+        tileLayer.addTo(map);
 
-        // پاک‌سازی ایونت‌ها هنگام unmount
+        // پاکسازی هنگام unmount
         return () => {
-            map.off('loading', onLoading);
-            map.off('load', onLoad);
+            map.remove();
+            mapInstanceRef.current = null;
         };
-    }, [map]);
+    }, []);
 
-    return <TileLayer url={url} />;
-}
-
-export default function MapTest() {
-    const center: [number, number] = [35.7, 51.4];
-
-
-    return (
-        <div style={{ height: '100vh', width: '100%' }}>
-            <MapContainer style={{ height: '100%', width: '100%' }}>
-                <SetView center={center} zoom={7} />
-                <TileLayerWithLock url={tileUrl} />
-            </MapContainer>
-
-        </div>
-    );
+    return <>
+        <span style={{ fontSize: "20px" }}>Leaflet</span>
+        <div ref={mapRef} style={{ height: '100vh', width: '100%' }} />
+    </>
 }
