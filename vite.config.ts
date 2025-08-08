@@ -44,7 +44,7 @@ export default defineConfig({
             options: {
               cacheName: 'tile-cache',   // نام کش برای tileها
               expiration: {
-                maxEntries: 1000,        // حداکثر تعداد کش شده‌ها
+                maxEntries: 5000,        // حداکثر تعداد کش شده‌ها
                 maxAgeSeconds: 30 * 24 * 60 * 60, // ۳۰ روز اعتبار کش
               },
               cacheableResponse: {
