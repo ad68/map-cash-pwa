@@ -1,7 +1,8 @@
-import React from 'react'
+
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import { registerSW } from 'virtual:pwa-register'
+import { BrowserRouter } from 'react-router-dom'
 
 const updateSW = registerSW({
   onNeedRefresh() {
@@ -13,8 +14,11 @@ const updateSW = registerSW({
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <BrowserRouter>
     <App />
-    <button onClick={() => updateSW?.()}>بروزرسانی سرویس‌ورکر</button>
-  </React.StrictMode>
+    <button onClick={() => updateSW()}>update service worker</button>
+  </BrowserRouter>
+
+
+
 )
