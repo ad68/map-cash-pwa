@@ -79,7 +79,7 @@ define(['./workbox-ce4f0d5f'], (function (workbox) { 'use strict';
    */
   workbox.precacheAndRoute([{
     "url": "index.html",
-    "revision": "0.la2vecu3pm8"
+    "revision": "0.tjoguntugpo"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
@@ -88,7 +88,7 @@ define(['./workbox-ce4f0d5f'], (function (workbox) { 'use strict';
   workbox.registerRoute(/^https?:\/\/37\.32\.26\.141:8080\/wmts\/gm_layer\/gm_grid\/\d+\/\d+\/\d+\.png$/, new workbox.CacheFirst({
     "cacheName": "tile-cache",
     plugins: [new workbox.ExpirationPlugin({
-      maxEntries: 1000,
+      maxEntries: 5000,
       maxAgeSeconds: 2592000
     }), new workbox.CacheableResponsePlugin({
       statuses: [0, 200]

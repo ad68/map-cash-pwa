@@ -16,7 +16,7 @@ const updateSW = registerSW({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <App />
-    <button onClick={() => updateSW()}>update service worker</button>
+    <button onClick={() => updateSW()}>update service workerssss</button>
   </BrowserRouter>
 
 
